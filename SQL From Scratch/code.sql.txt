@@ -1,0 +1,105 @@
+SELECT *
+FROM survey
+limit 10;
+
+select question,
+count(Distinct user_id)
+from survey
+group by question;
+
+select *
+from quiz
+limit 5;
+
+Select *
+from home_try_on
+limit 5;
+
+Select * 
+from purchase
+limit 5;
+
+SELECT DISTINCT q.user_id,
+	Case When h.user_id IS NOT NULL then 'True' else 'False' End As 'is_home_try_on',
+  h.number_of_pairs,
+  Case When p.user_id IS NOT NULL then 'True' else 'False' End As 'is_purchase'
+FROM quiz q
+LEFT JOIN home_try_on h
+   ON q.user_id = h.user_id
+LEFT JOIN purchase p
+   ON p.user_id = q.user_id
+   Limit 10;
+
+With  funnels As (
+SELECT DISTINCT q.user_id,
+	h.user_id IS NOT NULL As 'is_home_try_on',
+  h.number_of_pairs,
+  p.user_id IS NOT NULL As 'is_purchase'
+FROM quiz q
+LEFT JOIN home_try_on h
+   ON q.user_id = h.user_id
+LEFT JOIN purchase p
+   ON p.user_id = q.user_id)
+Select Count (*) as 'num_quiz',
+sum(is_home_try_on) as 'num_home_try_on',
+sum(is_purchase) as 'num_is_purchase',
+	1.0 * sum(is_home_try_on) / count(user_id) as 'quiz_to_home_try_on',
+  1.0 * sum(is_purchase) / sum(is_home_try_on) as 'home_try_on_to_is_purchase',
+  1.0 * Count(case when is_purchase = 1 and number_of_pairs = '3 pairs' then 1 else Null End)/(sum(is_home_try_on)/2) as '3_pairs_to_purchase_rate',
+  1.0 *count(case when is_purchase = 1 and number_of_pairs = '5 pairs' then 1 else Null end)/ (sum(is_home_try_on)/2) as '5_pairs_to_purchase_rate'
+ from Funnels;
+ 
+ select style,
+ 	count(*) as 'times_selected'
+  from quiz
+  group by 1 
+  order by 2 desc;
+ 
+  select fit,
+ 	count(*) as 'times_selected'
+  from quiz
+  group by 1 
+  order by 2 desc;
+  
+   select shape,
+ 	count(*) as 'times_selected'
+  from quiz
+  group by 1
+  order by 2 desc;
+  
+   select color,
+ 	count(*) as 'times_selected'
+  from quiz
+  group by 1 
+  order by 2 desc;
+  
+  select product_id,
+ 	count(*) as 'times_purchased'
+  from purchase
+  group by 1 
+  order by 2 desc;
+  
+  select style,
+ 	count(*) as 'times_purchased'
+  from purchase
+  group by 1 
+  order by 2 desc;
+  
+  select model_name,
+ 	count(*) as 'times_purchased'
+  from purchase
+  group by 1 
+  order by 2 desc;
+  
+  select color,
+ 	count(*) as 'times_purchased'
+  from purchase
+  group by 1 
+  order by 2 desc;
+ 
+  select price,
+ 	count(*) as 'times_purchased'
+  from purchase
+  group by 1 
+  order by 2 desc;
+  
